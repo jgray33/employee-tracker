@@ -82,6 +82,7 @@ async function askQuestions() {
       break;
     case "Add an employee":
       addEmployee()
+    //   await askQuestions()
       break;
     case "Update an employee role":
       console.log("Update role");
@@ -110,7 +111,7 @@ async function addDepartment() {
   const newDepartment = await inquirer.prompt(addDepartmentQ);
 }
 
-
+module.exports = askQuestions
 
 // Inquirer:
 // 1. View all departments
