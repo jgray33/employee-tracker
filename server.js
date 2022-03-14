@@ -1,4 +1,5 @@
-const express = require("express")
+const express = require("express");
+const { registerPrompt } = require("inquirer");
 const mysql = require("mysql2");
 
 const PORT = process.env.PORT || 3001;
@@ -23,8 +24,15 @@ function viewDepartments() {
     })
 }
 
+function viewRoles() {
+    db.query("SELECT role FROM employee", function(err, results){
+        console.log(results)
+    })}
+
+
 app.listen(PORT, () => {
     console.log(`Server running on Port${PORT}`)
 })
 
 module.exports = viewDepartments
+module.exports = viewRoles

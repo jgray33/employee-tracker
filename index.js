@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
-const viewDepartments = require("/server")
+const viewDepartments = require("./server")
+const addEmployee = require("./lib/addEmployee")
 // const mysql = require("mysql2");
 // Console table package
 
@@ -80,7 +81,7 @@ async function askQuestions() {
       console.log("Add a role");
       break;
     case "Add an employee":
-      console.log("Add an employee");
+      addEmployee()
       break;
     case "Update an employee role":
       console.log("Update role");
@@ -104,11 +105,12 @@ async function askQuestions() {
 
 askQuestions();
 
-function addDepartment() {
+async function addDepartment() {
   console.log("Department added");
   const newDepartment = await inquirer.prompt(addDepartmentQ);
-
 }
+
+
 
 // Inquirer:
 // 1. View all departments
