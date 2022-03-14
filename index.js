@@ -1,4 +1,5 @@
 const inquirer = require("inquirer");
+const viewDepartments = require("/server")
 // const mysql = require("mysql2");
 // Console table package
 
@@ -18,7 +19,7 @@ let mainMenuQuestions = [
       "Add an employee",
       "Update an employee role",
       "Remove",
-          ],
+    ],
   },
   {
     type: "list",
@@ -36,35 +37,44 @@ let mainMenuQuestions = [
   },
 ];
 
+let addDepartmentQ = [
+  {
+    type: "input",
+    name: "addDep",
+    message: "Please write the name of the department you would like to add",
+  },
+];
+
 async function askQuestions() {
   const mainMenuOptions = await inquirer.prompt(mainMenuQuestions);
   switch (mainMenuOptions.menuOption) {
     case "View all departments":
       console.log("View all departments");
+      viewDepartments()
       break;
     case "View all roles":
       console.log("View all roles");
       break;
     case "View employees":
-        switch (mainMenuOptions.viewEmployees) {
-            case "View all":
-              console.log("View all selected");
-              break;
-            case "View by manager":
-              console.log("View by man");
-              break;
-            case "View by department":
-              console.log("View by dep");
-              break;
-            default:
-              console.log("Try again");
-          }
+      switch (mainMenuOptions.viewEmployees) {
+        case "View all":
+          console.log("View all selected");
+          break;
+        case "View by manager":
+          console.log("View by man");
+          break;
+        case "View by department":
+          addDepartment();
+          break;
+        default:
+          console.log("Try again");
+      }
       break;
     case "View budget":
       console.log("View budg");
       break;
     case "Add a department":
-      console.log("Add department");
+      addDepartment();
       break;
     case "Add a role":
       console.log("Add a role");
@@ -86,12 +96,19 @@ async function askQuestions() {
         case "Delete employee":
           console.log("del emp");
           break;
-    default:
-      console.log("Something went wrong")
+        default:
+          console.log("Something went wrong");
+      }
   }
-  }}
+}
 
 askQuestions();
+
+function addDepartment() {
+  console.log("Department added");
+  const newDepartment = await inquirer.prompt(addDepartmentQ);
+
+}
 
 // Inquirer:
 // 1. View all departments

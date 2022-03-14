@@ -21,6 +21,7 @@
     "console": "^0.7.2",
     "express": "^4.17.3",
     "inquirer": "^8.2.1",
+    "mysql2": "^2.3.3",
     "package": "^1.0.1",
     "table": "^6.8.0"
   }
