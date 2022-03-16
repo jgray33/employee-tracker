@@ -1,5 +1,7 @@
 const express = require("express");
 const mysql = require("mysql2");
+const askQuestions = require("./index")
+
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -17,6 +19,7 @@ const db = mysql.createConnection(
   console.log("Connected to employee database")
 );
 
+// View departments functions ------------
 function viewDepartments() {
   db.query("SELECT * FROM department", (err, results) => {
           if (err) {
@@ -26,11 +29,17 @@ function viewDepartments() {
   });
 }
 
+// View roles function -----------------------
 function viewRoles() {
-  db.query("SELECT role FROM employee", function (err, results) {
-    console.log(results);
-  });
-}
+  db.query("SELECT role.id, role.title, role.salary, department.department_name FROM role INNER JOIN department ON role.department_id = department.id", (err, results) => {
+      if (err) {
+          console.log(err)
+      }
+    console.table(results);
+      });
+      }
+
+// View all employees function ----------------
 
 let deletedRow;
 
@@ -40,6 +49,7 @@ function deleteDepartment() {
       console.log(err);
     }
     console.log(result);
+    askQuestions()
   });
 }
 
@@ -47,5 +57,4 @@ app.listen(PORT, () => {
   console.log(`Server running on Port${PORT}`);
 });
 
-module.exports = viewDepartments;
-module.exports = viewRoles;
+module.exports = { viewDepartments, viewRoles }

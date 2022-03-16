@@ -1,8 +1,9 @@
 const inquirer = require("inquirer");
-const viewDepartments = require("./server")
+const queries = require("./server")
 const addEmployee = require("./lib/addEmployee")
-// const mysql = require("mysql2");
-// Console table package
+const viewDepartments = queries.viewDepartments
+const viewRoles = queries.viewRoles
+
 
 let mainMenuQuestions = [
   {
@@ -50,11 +51,11 @@ async function askQuestions() {
   const mainMenuOptions = await inquirer.prompt(mainMenuQuestions);
   switch (mainMenuOptions.menuOption) {
     case "View all departments":
-      console.log("View all departments");
       viewDepartments()
       break;
     case "View all roles":
       console.log("View all roles");
+      viewRoles()
       break;
     case "View employees":
       switch (mainMenuOptions.viewEmployees) {
@@ -75,7 +76,7 @@ async function askQuestions() {
       console.log("View budg");
       break;
     case "Add a department":
-      addDepartment();
+      addDepartment;
       break;
     case "Add a role":
       console.log("Add a role");
@@ -132,7 +133,8 @@ module.exports = askQuestions
 
 // View all roles = table > Job title // Role ID // Departments the role belongs to // Salary for the role
 
-// View all employees = table > Employee ID // First name // Last name // Job title // Department // Salary // Managers that employee reports to
+// View all employees = table > Employee ID // First name // Last name // Job title //
+//  Department // Salary // Managers that employee reports to
 
 // Add a department = Add name of department to the database
 
