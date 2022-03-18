@@ -4,6 +4,7 @@ const addEmployee = require("./lib/addEmployee")
 const viewDepartments = queries.viewDepartments
 const viewRoles = queries.viewRoles
 const viewAllEmployees = queries.viewAllEmployees
+const addDepartmentQuery = queries.addDepartmentQuery
 
 let mainMenuQuestions = [
   {

@@ -42,7 +42,16 @@ function viewRoles() {
   );
 }
 
-function addDepartmentQuery(depToAdd) {}
+function addDepartmentQuery(depToAdd) {
+    db.query(`INSERT INTO department (department_name) VALUES ("${depToAdd}")`,
+    (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+                console.log(`${depToAdd} department added!`)
+      }
+    );
+}
 
 // View all employees function ----------------
 function viewAllEmployees() {
@@ -73,4 +82,4 @@ app.listen(PORT, () => {
   console.log(`Server running on Port${PORT}`);
 });
 
-module.exports = { viewDepartments, viewRoles, viewAllEmployees };
+module.exports = { viewDepartments, viewRoles, viewAllEmployees, addDepartmentQuery };
