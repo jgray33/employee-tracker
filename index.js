@@ -3,7 +3,7 @@ const queries = require("./server")
 const addEmployee = require("./lib/addEmployee")
 const viewDepartments = queries.viewDepartments
 const viewRoles = queries.viewRoles
-
+const viewAllEmployees = queries.viewAllEmployees
 
 let mainMenuQuestions = [
   {
@@ -60,10 +60,10 @@ async function askQuestions() {
     case "View employees":
       switch (mainMenuOptions.viewEmployees) {
         case "View all":
-          console.log("View all selected");
+          viewAllEmployees()
           break;
         case "View by manager":
-          console.log("View by man");
+                      console.log("View by man");
           break;
         case "View by department":
           addDepartment();
@@ -76,7 +76,7 @@ async function askQuestions() {
       console.log("View budg");
       break;
     case "Add a department":
-      addDepartment;
+      addDepartment();
       break;
     case "Add a role":
       console.log("Add a role");
@@ -109,8 +109,10 @@ askQuestions();
 
 async function addDepartment() {
   console.log("Department added");
-  const newDepartment = await inquirer.prompt(addDepartmentQ);
-}
+  const newDepartmentAns = await inquirer.prompt(addDepartmentQ)
+  let depToAdd = newDepartmentAns.addDep
+  addDepartmentQuery(depToAdd)   
+  }
 
 module.exports = askQuestions
 

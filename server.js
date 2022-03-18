@@ -1,7 +1,7 @@
 const express = require("express");
 const mysql = require("mysql2");
-const askQuestions = require("./index")
-
+const { debugPort } = require("process");
+const askQuestions = require("./index");
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -22,7 +22,7 @@ const db = mysql.createConnection(
 // View departments functions ------------
 function viewDepartments() {
   db.query("SELECT * FROM department", (err, results) => {
-          if (err) {
+    if (err) {
       console.log(err);
     }
     console.table(results);
@@ -31,15 +31,31 @@ function viewDepartments() {
 
 // View roles function -----------------------
 function viewRoles() {
-  db.query("SELECT role.id, role.title, role.salary, department.department_name FROM role INNER JOIN department ON role.department_id = department.id", (err, results) => {
+  db.query(
+    "SELECT role.id, role.title, role.salary, department.department_name FROM role INNER JOIN department ON role.department_id = department.id",
+    (err, results) => {
       if (err) {
-          console.log(err)
+        console.log(err);
       }
-    console.table(results);
-      });
-      }
+      console.table(results);
+    }
+  );
+}
+
+function addDepartmentQuery(depToAdd) {}
 
 // View all employees function ----------------
+function viewAllEmployees() {
+  db.query(
+    "SELECT employee.employee_id, employee.first_name, employee.last_name, role.title, department.department_name, role.salary, employee.manager_id FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON role.department_id  = department.id",
+    (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      console.table(results);
+    }
+  );
+}
 
 let deletedRow;
 
@@ -49,7 +65,7 @@ function deleteDepartment() {
       console.log(err);
     }
     console.log(result);
-    askQuestions()
+    askQuestions();
   });
 }
 
@@ -57,4 +73,4 @@ app.listen(PORT, () => {
   console.log(`Server running on Port${PORT}`);
 });
 
-module.exports = { viewDepartments, viewRoles }
+module.exports = { viewDepartments, viewRoles, viewAllEmployees };
