@@ -131,8 +131,15 @@ async function viewAllDepartments() {
   }
 
 async function viewAllRoles() {
-  // View all roles = table > Job title // Role ID // Departments the role belongs to // Salary for the role
-  console.log("View all roles function");
+  db.query(
+    "SELECT role.title, role.id, role.salary, department.department_name FROM role INNER JOIN department ON role.department_id = department.id",
+    (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      console.table(results);
+    }
+  );
 }
 
 async function viewAllEmployees() {
