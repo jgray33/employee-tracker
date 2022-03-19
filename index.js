@@ -1,11 +1,26 @@
 const inquirer = require("inquirer");
-const queries = require("./server")
-const addEmployee = require("./lib/addEmployee")
-const viewDepartments = queries.viewDepartments
-const viewRoles = queries.viewRoles
-const viewAllEmployees = queries.viewAllEmployees
-const addDepartmentQuery = queries.addDepartmentQuery
+const mysql = require("mysql2");
+const express = require("express");
 
+// Connect to the database ----------------------------------------------
+const PORT = process.env.PORT || 3003;
+const app = express();
+
+const db = mysql.createConnection(
+  {
+    host: "localhost",
+    user: "root",
+    password: "password",
+    database: "employee_db",
+  },
+  console.log("Connected to employee database")
+);
+
+app.listen(PORT, () => {
+  console.log(`Server running on Port${PORT}`);
+});
+
+// Main questions------------------------------------------------------
 let mainMenuQuestions = [
   {
     prefix: "What would you like to do today?",
@@ -21,7 +36,9 @@ let mainMenuQuestions = [
       "Add a role",
       "Add an employee",
       "Update an employee role",
+      "Update an employee manager",
       "Remove",
+      "Exit",
     ],
   },
   {
@@ -40,65 +57,61 @@ let mainMenuQuestions = [
   },
 ];
 
-let addDepartmentQ = [
-  {
-    type: "input",
-    name: "addDep",
-    message: "Please write the name of the department you would like to add",
-  },
-];
-
 async function askQuestions() {
   const mainMenuOptions = await inquirer.prompt(mainMenuQuestions);
   switch (mainMenuOptions.menuOption) {
     case "View all departments":
-      viewDepartments()
+      viewAllDepartments();
       break;
     case "View all roles":
-      console.log("View all roles");
-      viewRoles()
+      viewAllRoles();
       break;
     case "View employees":
       switch (mainMenuOptions.viewEmployees) {
         case "View all":
-          viewAllEmployees()
+          viewAllEmployees();
           break;
         case "View by manager":
-                      console.log("View by man");
+          viewEmployeesByManager();
           break;
         case "View by department":
-          addDepartment();
+          viewEmployeesByDepartment();
           break;
         default:
           console.log("Try again");
       }
       break;
     case "View budget":
-      console.log("View budg");
+      viewBudget();
       break;
     case "Add a department":
       addDepartment();
       break;
     case "Add a role":
-      console.log("Add a role");
+      addRole();
       break;
     case "Add an employee":
-      addEmployee()
-    //   await askQuestions()
+      addEmployee();
       break;
     case "Update an employee role":
-      console.log("Update role");
+      updateEmployeeRole();
+      break;
+    case "Update an employee manager":
+      updateEmployeeManager();
+      break;
+    case "Exit":
+      console.log("Exit");
       break;
     case "Remove":
       switch (mainMenuOptions.removeEmployees) {
         case "Delete department":
-          console.log("Del dep");
+          deleteDepartment();
           break;
         case "Delete role":
-          console.log("Del role");
+          deleteRole();
           break;
         case "Delete employee":
-          console.log("del emp");
+          deleteEmployees();
           break;
         default:
           console.log("Something went wrong");
@@ -108,51 +121,73 @@ async function askQuestions() {
 
 askQuestions();
 
+async function viewAllDepartments() {
+  // View all departments = formatted table > Department Names // Department IDs
+  console.log("View all dep function");
+}
+
+async function viewAllRoles() {
+  // View all roles = table > Job title // Role ID // Departments the role belongs to // Salary for the role
+  console.log("View all roles function");
+}
+
+async function viewAllEmployees() {
+  // View all employees = table > Employee ID // First name // Last name // Job title //
+  //  Department // Salary // Managers that employee reports to
+  console.log("view all employees function");
+}
+
+async function viewEmployeesByManager() {
+  // View all employees by the manager
+  console.log("View all employees by manager function");
+}
+
+async function viewEmployeesByDepartment() {
+  // View all employees by the department
+  console.log("View all employees by department function");
+}
+
+async function viewBudget() {
+  // View the total utilized budget of a department = the combined salaries of all employees in that department.
+  console.log("View budget function");
+}
+
 async function addDepartment() {
-  console.log("Department added");
-  const newDepartmentAns = await inquirer.prompt(addDepartmentQ)
-  let depToAdd = newDepartmentAns.addDep
-  addDepartmentQuery(depToAdd)   
-  }
+  // Add a department = Add name of department to the database
+  console.log("Add department function");
+}
 
-module.exports = askQuestions
+async function addRole() {
+  // Add a role = Add name, salary, department for the role to the database.
+  console.log("Add role");
+}
 
-// Inquirer:
-// 1. View all departments
-// 2. View all roles
-// 3. View all employees
-//  3a. View employees by manager
-//  3b. View employees by department
-// 4. Add a department
-// 5. Add a role
-// 6. Add an employee
-// 7. Update an employee role
-// 8. Remove
-// 8a. Delete department
-// 8b. Delete role
-// 8c. Delete employee
+async function addEmployee() {
+  // Add an employee = Add employees first name, last name, role, manager.
+  console.log("Add employee function");
+}
 
-// View all departments = formatted table > Department Names // Department IDs
+async function updateEmployeeRole() {
+  // Update employee role = Select employee and update role.
+  console.log("Update employee role function");
+}
 
-// View all roles = table > Job title // Role ID // Departments the role belongs to // Salary for the role
+async function updateEmployeeManager() {
+  // Update employee managers = Select employee and update manager
+  console.log("Update employee manager function");
+}
 
-// View all employees = table > Employee ID // First name // Last name // Job title //
-//  Department // Salary // Managers that employee reports to
+async function deleteDepartment() {
+  // Delete department function
+  console.log("Delete department function");
+}
 
-// Add a department = Add name of department to the database
+async function deleteRole() {
+  // Delete role function
+  console.log("Delete role function");
+}
 
-// Add a role = Add name, salary, department for the role to the database.
-
-// Add an employee = Add employees first name, last name, role, manager.
-
-// Update employee role = Select employee and update role.
-
-// Update employee managers = Select employee and update manager
-
-// View employees by manager
-
-// View employees by department
-
-// Delete departments, roles, and employees.
-
-// View the total utilized budget of a department = the combined salaries of all employees in that department.
+async function deleteEmployees() {
+  // Delete employees function
+  console.log("Delete employees function");
+}
