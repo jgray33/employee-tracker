@@ -58,6 +58,14 @@ let mainMenuQuestions = [
   },
 ];
 
+let addDepartmentQ = [
+  {
+    type: "input",
+    name: "addDep",
+    message: "Please write the name of the department you would like to add",
+  },
+];
+
 async function askQuestions() {
   const mainMenuOptions = await inquirer.prompt(mainMenuQuestions);
   switch (mainMenuOptions.menuOption) {
@@ -120,9 +128,7 @@ async function askQuestions() {
   }
 }
 
-// askQuestions();
-viewEmployeesByManager()
-
+askQuestions();
 
 async function viewAllDepartments() {
   db.query("SELECT * FROM department", (err, results) => {
@@ -159,16 +165,16 @@ async function viewAllEmployees() {
 }
 
 async function viewEmployeesByManager() {
-    let viewEmployeesQuery = fs.readFileSync(
-        "./db/viewEmployeeManQuery.sql",
-        "utf8"
-      );
-      db.query(viewEmployeesQuery, (err, results) => {
-        if (err) {
-          console.log(err);
-        }
-        console.table(results);
-      });
+  let viewEmployeesQuery = fs.readFileSync(
+    "./db/viewEmployeeManQuery.sql",
+    "utf8"
+  );
+  db.query(viewEmployeesQuery, (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    console.table(results);
+  });
 }
 
 async function viewEmployeesByDepartment() {
@@ -182,9 +188,20 @@ async function viewBudget() {
 }
 
 async function addDepartment() {
-  // Add a department = Add name of department to the database
-  console.log("Add department function");
+  const newDepartment = await inquirer.prompt(addDepartmentQ);
+  console.log(newDepartment.addDep);
+  db.query(
+    `INSERT INTO department (department_name) VALUES ("${newDepartment.addDep}")`,
+    (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(`${newDepartment.addDep} department added!`);
+    }
+  );
+  viewAllDepartments()
 }
+
 
 async function addRole() {
   // Add a role = Add name, salary, department for the role to the database.
