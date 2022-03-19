@@ -122,9 +122,13 @@ async function askQuestions() {
 askQuestions();
 
 async function viewAllDepartments() {
-  // View all departments = formatted table > Department Names // Department IDs
-  console.log("View all dep function");
-}
+  db.query("SELECT * FROM department", (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    console.table(results);
+    });
+  }
 
 async function viewAllRoles() {
   // View all roles = table > Job title // Role ID // Departments the role belongs to // Salary for the role
