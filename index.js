@@ -121,7 +121,8 @@ async function askQuestions() {
 }
 
 // askQuestions();
-viewAllEmployees()
+viewEmployeesByManager()
+
 
 async function viewAllDepartments() {
   db.query("SELECT * FROM department", (err, results) => {
@@ -145,23 +146,29 @@ async function viewAllRoles() {
 }
 
 async function viewAllEmployees() {
-  // View all employees = table > Employee ID // First name // Last name // Job title //
-  //  Department // Salary // Managers that employee reports to
-  console.log("view all employees function");
-  let viewEmployeesQuery = fs.readFileSync("./db/viewEmployeesQuery.sql", "utf8")
-  db.query(viewEmployeesQuery,
-    (err, results) => {
-      if (err) {
-        console.log(err);
-      }
-      console.table(results);
-    }
+  let viewEmployeesQuery = fs.readFileSync(
+    "./db/viewEmployeesQuery.sql",
+    "utf8"
   );
+  db.query(viewEmployeesQuery, (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    console.table(results);
+  });
 }
 
-async function viewAllEmployeesByManager() {
-  // View all employees by the manager
-  console.log("View all employees by manager function");
+async function viewEmployeesByManager() {
+    let viewEmployeesQuery = fs.readFileSync(
+        "./db/viewEmployeeManQuery.sql",
+        "utf8"
+      );
+      db.query(viewEmployeesQuery, (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+        console.table(results);
+      });
 }
 
 async function viewEmployeesByDepartment() {

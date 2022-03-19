@@ -4,3 +4,6 @@ INNER JOIN role ON role.id = e.role_id
 INNER JOIN department ON role.department_id  = department.id
 LEFT JOIN employee m ON 
 m.employee_id = e.manager_id  
+
+
+
