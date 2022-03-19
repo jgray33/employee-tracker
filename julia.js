@@ -1,26 +1,4 @@
-// View departments functions ------------
-function viewDepartments() {
-    db.query("SELECT * FROM department", (err, results) => {
-      if (err) {
-        console.log(err);
-      }
-      console.table(results);
-    });
-  }
-  
-  // View roles function -----------------------
-  function viewRoles() {
-    db.query(
-      "SELECT role.id, role.title, role.salary, department.department_name FROM role INNER JOIN department ON role.department_id = department.id",
-      (err, results) => {
-        if (err) {
-          console.log(err);
-        }
-        console.table(results);
-      }
-    );
-  }
-  
+
   function addDepartmentQuery(depToAdd) {
     db.query(
       `INSERT INTO department (department_name) VALUES ("${depToAdd}")`,

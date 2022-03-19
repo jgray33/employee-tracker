@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const express = require("express");
+const fs = require("fs");
 
 // Connect to the database ----------------------------------------------
 const PORT = process.env.PORT || 3003;
@@ -119,7 +120,8 @@ async function askQuestions() {
   }
 }
 
-askQuestions();
+// askQuestions();
+viewAllEmployees()
 
 async function viewAllDepartments() {
   db.query("SELECT * FROM department", (err, results) => {
@@ -127,8 +129,8 @@ async function viewAllDepartments() {
       console.log(err);
     }
     console.table(results);
-    });
-  }
+  });
+}
 
 async function viewAllRoles() {
   db.query(
@@ -146,9 +148,18 @@ async function viewAllEmployees() {
   // View all employees = table > Employee ID // First name // Last name // Job title //
   //  Department // Salary // Managers that employee reports to
   console.log("view all employees function");
+  let viewEmployeesQuery = fs.readFileSync("./db/viewEmployeesQuery.sql", "utf8")
+  db.query(viewEmployeesQuery,
+    (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      console.table(results);
+    }
+  );
 }
 
-async function viewEmployeesByManager() {
+async function viewAllEmployeesByManager() {
   // View all employees by the manager
   console.log("View all employees by manager function");
 }
