@@ -1,39 +1,30 @@
-  
-  
-   
-  
-  function addRoleQuery(roleToAdd, newRoleSalary, newRoleDep) {
-  let getDepId = (newRoleDep) => {
-  db.query("SELECT * FROM department", (err, results) => {
-      for (const key in object) {
-          if (Object.hasOwnProperty.call(object, key)) {
-              const element = object[key];
-              console.log(results)
-          }
-      }
-  })
-  }
-  
-  
-   db.query(`INSERT INTO role (title, salary, department_id) VALUES (${roleToAdd}, ${newRoleSalary}, ${newRoleDep})`, (err, results) => {
-      if (err) {
-          console.log(err);
-        } console.log( "Role added")
-        console.log(results)
-      })}
-  
-  
- 
-  
-  let deletedRow;
-  
-  function deleteDepartment() {
-    db.query(`DELETE FROM department WHERE id = ?`, deletedRow, (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(result);
-      askQuestions();
-    });
-  }
+let testObject = [
+    {
+    userName: "Julia",
+    age: "7"
+    },
+    {
+    userName: "Anna",
+    age: "9"
+    },
+    {
+    userName: "Ben",
+    age: "10"
+    },
+    {
+    userName: "Jess",
+    age: "22"
+    },
+]
 
+let myName = "Julia"
+
+
+for(let person in testObject) {
+    console.log(`${testObject[person].userName}`)
+    if (testObject[person].userName === myName) {
+        let myAge = testObject[person].age
+        console.log(myAge)
+    }
+    
+}

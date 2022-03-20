@@ -24,13 +24,6 @@ app.listen(PORT, () => {
 
 
 
-let addDepartmentQ = [
-  {
-    type: "input",
-    name: "addDep",
-    message: "Please write the name of the department you would like to add",
-  },
-];
 
 let addRoleQ = [
   {
@@ -69,22 +62,62 @@ let addRoleQ = [
 //   addRoleQuery(roleToAdd, newRoleSalary, newRoleDep);
 // }
 
-// function listCurrentDeps() {
-//   let departmentArray = [];
-//   db.query("SELECT department_name FROM department", (err, results) => {
-//     if (err) {
-//       console.log(err);
-//     }
-//     results.forEach((department) =>
-//       departmentArray.push(department.department_name)
-//     );
-//   });
-//   //   return departmentArray;
-//   console.log(departmentArray);
-// }
 
-// listCurrentDeps();
 
+  
+  
+
+//   STUCK HERE
+async function addRole() {
+    // Get the list of departments
+    let departmentArray = [];
+    db.query("SELECT department_name FROM department", (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      results.forEach((department) => 
+      departmentArray.push(department.department_name))
+      let departments = departmentArray
+
+// Add the departments into the inquirer
+     inquirer. 
+    prompt([
+                    {
+              type: "input",
+              name: "newRoleName",
+              message: "Please write the name of the role you would like to add",
+            },
+            {
+              type: "input",
+              name: "newRoleSalary",
+              message: "And the salary for that role?",
+            },
+            {
+              type: "list",
+              name: "newRoleDep",
+              message: "Which department is this new role in?",
+              choices: [...departments]
+            },
+          ])
+ db.query(`INSERT INTO role (title, salary, department_id) VALUES (${answers.newRoleName}, ${answers.newRoleSalary}, ${answers.newRoleDep})`, (err, results) => {
+    if (err) {
+        console.log(err);
+      } console.log( "Role added")
+      console.log(results)
+    })})}
+
+
+
+    let departmentArray = [];
+    db.query("SELECT department_name FROM department", (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      results.forEach((department) =>
+        departmentArray.push(department.department_name)
+      );
+      let listOfDepartments = [...new Set(departmentArray)];
+      return listOfDepartments;
 
 
 
