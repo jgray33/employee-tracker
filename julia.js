@@ -1,15 +1,3 @@
-
-  function addDepartmentQuery(depToAdd) {
-    db.query(
-      `INSERT INTO department (department_name) VALUES ("${depToAdd}")`,
-      (err, results) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log(`${depToAdd} department added!`);
-      }
-    );
-  }
   
   
    
@@ -35,18 +23,7 @@
       })}
   
   
-  // View all employees function ----------------
-  function viewAllEmployees() {
-    db.query(
-      "SELECT employee.employee_id, employee.first_name, employee.last_name, role.title, department.department_name, role.salary, employee.manager_id FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON role.department_id  = department.id",
-      (err, results) => {
-        if (err) {
-          console.log(err);
-        }
-        console.table(results);
-      }
-    );
-  }
+ 
   
   let deletedRow;
   
@@ -60,21 +37,3 @@
     });
   }
 
-  module.exports = {
-    viewDepartments,
-    viewRoles,
-    viewAllEmployees,
-    addDepartmentQuery,
-    addRoleQuery,
-    listCurrentDeps,
-  };
-
-
-
- 
-const addEmployee = require("./lib/addEmployee")
-const viewDepartments = queries.viewDepartments
-const viewRoles = queries.viewRoles
-const viewAllEmployees = queries.viewAllEmployees
-const addDepartmentQuery = queries.addDepartmentQuery
-const addRoleQuery = queries.addRoleQuery
