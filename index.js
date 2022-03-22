@@ -2,6 +2,8 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const express = require("express");
 const fs = require("fs");
+const { createBrotliCompress } = require("zlib");
+const { debugPort } = require("process");
 
 // Connect to the database ----------------------------------------------
 const PORT = process.env.PORT || 3003;
@@ -66,15 +68,11 @@ let addDepartmentQ = [
   },
 ];
 
-
-  
-
 async function askQuestions() {
   const mainMenuOptions = await inquirer.prompt(mainMenuQuestions);
   switch (mainMenuOptions.menuOption) {
     case "View all departments":
-      //   viewAllDepartments();
-      listCurrentDeps();
+      viewAllDepartments();
       break;
     case "View all roles":
       viewAllRoles();
@@ -101,7 +99,7 @@ async function askQuestions() {
       addDepartment();
       break;
     case "Add a role":
-      newRoleQ()
+      newRoleQ();
       break;
     case "Add an employee":
       addEmployee();
@@ -194,11 +192,10 @@ async function viewBudget() {
   console.log("View budget function");
 }
 
-
 async function addDepartment() {
   const newDepartment = await inquirer.prompt(addDepartmentQ);
   console.log(newDepartment.addDep);
-    db.query(
+  db.query(
     `INSERT INTO department (department_name) VALUES ("${newDepartment.addDep}")`,
     (err, results) => {
       if (err) {
@@ -210,90 +207,194 @@ async function addDepartment() {
   viewAllDepartments();
 }
 
-// This works
-function listCurrentDeps() {
-  let departmentArray = [];
+async function newRoleQ() {
   db.query("SELECT department_name FROM department", (err, results) => {
     if (err) {
       console.log(err);
     }
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "newRoleName",
+          message: "Please write the name of the role you would like to add",
+        },
+        {
+          type: "input",
+          name: "newRoleSalary",
+          message: "And the salary for that role?",
+        },
+        {
+          type: "list",
+          name: "newRoleDep",
+          message: "Which department is this new role in?",
+
+          choices: function () {
+            let departmentArray = [];
+            results.forEach((department) =>
+              departmentArray.push(department.department_name)
+            );
+            let listOfDepartments = [...new Set(departmentArray)];
+            return listOfDepartments;
+          },
+        },
+      ])
+      .then((answers) => {
+        addNewRole(answers);
+      });
+  });
+}
+
+function addNewRole(answers) {
+  db.query("SELECT * FROM department", (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(results);
+    let newRole = answers.newRoleName;
+    let newSalary = answers.newRoleSalary;
+    let newDepartment = answers.newRoleDep;
+
+    // Iterate through the department from the db,
+    //  if the db department name = newDepartment,
+    //  newDepId is = db department name's ID
+    for (let result in results) {
+      if (results[result].department_name === newDepartment) {
+        let newDepartmentId = results[result].id;
+        console.log(newDepartmentId);
+        db.query(
+          `INSERT INTO role (title, salary, department_id) VALUES ("${newRole}", ${newSalary}, ${newDepartmentId})`,
+          (err, results) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log("Role added");
+            console.log(results);
+            viewAllRoles();
+          }
+        );
+      }
+    }
+  });
+}
+
+// addEmployee()
+
+async function addEmployee() {
+  // Add an employee = Add employees first name, last name, role, manager.
+  let addNewQuery = fs.readFileSync("./db/addNewEmp.sql", "utf8");
+  db.query(addNewQuery, (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "addFirstName",
+          message:
+            "Please write the first name of the employee you would like to add",
+        },
+        {
+          type: "input",
+          name: "addLastName",
+          message:
+            "Please write the last name of the employee you would like to add",
+        },
+        {
+          type: "list",
+          name: "addNewEmpRole",
+          message: "Please select the role of this new employee",
+          choices: function () {
+            let roleArray = [];
+            results.forEach((role) => roleArray.push(role.title));
+            let uniqueRoleArray = [...new Set(roleArray)];
+            return uniqueRoleArray;
+          },
+        },
+        {
+          type: "list",
+          name: "addNewEmpMan",
+          message: "Please select the Manager of this new employee",
+          choices: function () {
+            let managerArray = [];
+            results.forEach((role) => managerArray.push(role.Manager));
+            let uniqueManagerArray = [...new Set(managerArray)];
+            let removeNullArray = uniqueManagerArray.filter((n) => n);
+            return removeNullArray;
+          },
+        },
+      ])
+      .then((answers) => {
+        addNewEmployee(answers);
+      });
+  });
+}
+
+// getDepArray()
+
+function getDepArray() {
+  db.query("SELECT department_name FROM department", (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    let departmentArray = [];
     results.forEach((department) =>
       departmentArray.push(department.department_name)
     );
     let listOfDepartments = [...new Set(departmentArray)];
+    console.log(listOfDepartments);
     return listOfDepartments;
   });
 }
 
-async function newRoleQ() {
-    db.query("SELECT department_name FROM department", (err, results) => {
-      if (err) {
-        console.log(err);
-      }
-      inquirer
-        .prompt([
-          {
-            type: "input",
-            name: "newRoleName",
-            message: "Please write the name of the role you would like to add",
-          },
-          {
-            type: "input",
-            name: "newRoleSalary",
-            message: "And the salary for that role?",
-          },
-          {
-            type: "list",
-            name: "newRoleDep",
-            message: "Which department is this new role in?",
-  
-            choices: function () {
-              let departmentArray = [];
-              results.forEach((department) =>
-                departmentArray.push(department.department_name)
-              );
-              let listOfDepartments = [...new Set(departmentArray)];
-              return listOfDepartments;
-            },
-          },
-        ])
-        .then((answers) => {
-          addNewRole(answers);
-        });
-    });
-  }
-   
-  
-  function addNewRole(answers) {
-    db.query("SELECT * FROM department", (err, results) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(results);
-      let newRole = answers.newRoleName;
-      let newSalary = answers.newRoleSalary;
-      let newDepartment = answers.newRoleDep;
-  
-      // Iterate through the department from the db,
-      //  if the db department name = newDepartment,
-      //  newDepId is = db department name's ID
-      for (let result in results) {
-        if (results[result].department_name === newDepartment) {
-          let newDepartmentId = results[result].id;
-          console.log(newDepartmentId);
-          db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${newRole}", ${newSalary}, ${newDepartmentId})`, (err, results) => {
-              if (err) {
-                  console.log(err);
-                } console.log( "Role added")
-                console.log(results)
-                viewAllRoles()
-        })}}})}
+addNewEmployee();
 
-
-
-async function addEmployee() {
+function addNewEmployee(answers) {
+    let newRole = answers.addNewEmpRole
+    let newManager = answers.addNewEmpMan
   // Add an employee = Add employees first name, last name, role, manager.
-  console.log("Add employee function");
+  let addNewQuery = fs.readFileSync("./db/getRoleIdAndManagerId.sql", "utf8");
+  db.query(addNewQuery, (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(results);
+    //   Get role ID from role name and manager
+    
+    
+
+    //   Get manager ID from manager name
+  });
+}
+
+function getRoleArray() {
+  let addNewQuery = fs.readFileSync("./db/addNewEmp.sql", "utf8");
+  db.query(addNewQuery, (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    let roleArray = [];
+    results.forEach((role) => roleArray.push(role.title));
+    let uniqueRoleArray = [...new Set(roleArray)];
+    return uniqueRoleArray;
+  });
+}
+
+// getManagerArray();
+
+function getManagerArray() {
+  let addNewQuery = fs.readFileSync("./db/addNewEmp.sql", "utf8");
+  db.query(addNewQuery, (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    let managerArray = [];
+    results.forEach((role) => managerArray.push(role.Manager));
+    let uniqueManagerArray = [...new Set(managerArray)];
+    let removeNullArray = uniqueManagerArray.filter((n) => n);
+    return removeNullArray;
+  });
 }
 
 async function updateEmployeeRole() {

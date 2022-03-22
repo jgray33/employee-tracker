@@ -25,42 +25,6 @@ app.listen(PORT, () => {
 
 
 
-let addRoleQ = [
-  {
-    type: "input",
-    name: "newRoleName",
-    message: "Please write the name of the role you would like to add",
-  },
-  {
-    type: "input",
-    name: "newRoleSalary",
-    message: "And the salary for that role?",
-  },
-  {
-    type: "list",
-    name: "newRoleDep",
-    message: "Which department is this new role in?",
-    choices: ["1", "2"],
-  },
-];
-
-
-
-
-// async function addDepartment() {
-//   console.log("Department added");
-//   const newDepartmentAns = await inquirer.prompt(addDepartmentQ);
-//   let depToAdd = newDepartmentAns.addDep;
-//   addDepartmentQuery(depToAdd);
-// }
-
-// async function addRole() {
-//   const newRoleAns = await inquirer.prompt(addRoleQ);
-//   let roleToAdd = newRoleAns.newRoleName;
-//   let newRoleSalary = newRoleAns.newRoleSalary;
-//   let newRoleDep = newRoleAns.newRoleDep;
-//   addRoleQuery(roleToAdd, newRoleSalary, newRoleDep);
-// }
 
 
 
@@ -106,6 +70,10 @@ async function addRole() {
       console.log(results)
     })})}
 
+// Gets the second bit in the object
+    results.forEach((department) => {
+        for (const depName in department) {
+            console.log(`${department[depName]}`)
 
 
     let departmentArray = [];
@@ -120,15 +88,98 @@ async function addRole() {
       return listOfDepartments;
 
 
+    //   let departmentArray = [];
+    //         results.forEach((department) =>
+    //           departmentArray.push(department.department_name)
+    //         );
+    //         let listOfDepartments = [...new Set(departmentArray)];
+    //         return listOfDepartments;
+
+        
+  
+   
+  
+     
+   
+    
+    let deletedRow;
+    
+    function deleteDepartment() {
+      db.query(`DELETE FROM department WHERE id = ?`, deletedRow, (err, result) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log(result);
+        askQuestions();
+      });
+    }
+
+    // This works
+function listCurrentDeps() {
+  let departmentArray = [];
+  db.query("SELECT department_name FROM department", (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    results.forEach((department) =>
+      departmentArray.push(department.department_name)
+    );
+    let listOfDepartments = [...new Set(departmentArray)];
+    return listOfDepartments;
+  });
+}
+  
+  
 
 
 
 
 
 
+// Get the array of departments
+// if (departments.includes(newDepToBeAdded)) {
+// console.log("${newDepToBeAdded} is already in the system")
+// else { }
 
 
 
+async function newRoleQ() {
+    db.query("SELECT department_name FROM department", (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "newRoleName",
+            message: "Please write the name of the role you would like to add",
+          },
+          {
+            type: "input",
+            name: "newRoleSalary",
+            message: "And the salary for that role?",
+          },
+          {
+            type: "list",
+            name: "newRoleDep",
+            message: "Which department is this new role in?",
+  
+            choices: function () {
+              let departmentArray = [];
+              results.forEach((department) =>
+                departmentArray.push(department.department_name)
+              );
+              let listOfDepartments = [...new Set(departmentArray)];
+              return listOfDepartments;
+            },
+          },
+        ])
+        .then((answers) => {
+          addNewRole(answers);
+        });
+    });
+  }
 
 
 
