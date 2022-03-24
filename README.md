@@ -27,7 +27,7 @@ A program that allows a business owner to view and manage the departments, roles
 1. Clone this repository 
 2. Go to the directory in your terminal 
 3. Run npm install to install the packages 
-4. Run: node start 
+4. Run: node index.js 
 
 Watch this [video](https://youtu.be/O52OjCItHIU) to demonstrate how to use this application.
 
