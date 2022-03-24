@@ -2,10 +2,6 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const express = require("express");
 const fs = require("fs");
-const { createBrotliCompress } = require("zlib");
-const { debugPort } = require("process");
-const { checkPrimeSync } = require("crypto");
-const res = require("express/lib/response");
 
 // Connect to the database ----------------------------------------------
 const PORT = process.env.PORT || 3003;
@@ -31,7 +27,6 @@ let mainMenuQuestions = [
     prefix: "What would you like to do today?",
     type: "list",
     name: "menuOption",
-    // message: "What would you like to do today?",
     choices: [
       "View all departments",
       "View all roles",
@@ -70,7 +65,7 @@ let addDepartmentQ = [
   },
 ];
 
-// askQuestions();
+askQuestions();
 
 async function askQuestions() {
   const mainMenuOptions = await inquirer.prompt(mainMenuQuestions);
@@ -115,7 +110,7 @@ async function askQuestions() {
       updateEmployeeManager();
       break;
     case "Exit":
-      console.log("Exit");
+      process.exit()
       break;
     case "Remove":
       switch (mainMenuOptions.removeEmployees) {
@@ -140,6 +135,7 @@ async function viewAllDepartments() {
       console.log(err);
     }
     console.table(results);
+    askQuestions();
   });
 }
 
@@ -151,6 +147,7 @@ async function viewAllRoles() {
         console.log(err);
       }
       console.table(results);
+      askQuestions();
     }
   );
 }
@@ -165,6 +162,7 @@ async function viewAllEmployees() {
       console.log(err);
     }
     console.table(results);
+    askQuestions();
   });
 }
 
@@ -178,6 +176,7 @@ async function viewEmployeesByManager() {
       console.log(err);
     }
     console.table(results);
+    askQuestions();
   });
 }
 
@@ -188,6 +187,7 @@ async function viewEmployeesByDepartment() {
       console.log(err);
     }
     console.table(results);
+    askQuestions();
   });
 }
 
@@ -252,24 +252,20 @@ async function newRoleQ() {
               console.log(err);
             }
             console.log(`${answers.newRoleName} was successfully added`);
+            askQuestions();
           }
         );
       });
   });
 }
 
-
-
-
 async function addEmployee() {
-  // Add an employee = Add employees first name, last name, role, manager.
   let addNewQuery =
     "SELECT  role.title, CONCAT(m.first_name, SPACE(1), m.last_name) AS Manager, e.role_id, e.manager_id FROM employee e INNER JOIN role ON role.id = e.role_id LEFT JOIN employee m ON m.employee_id = e.manager_id";
   db.query(addNewQuery, (err, results) => {
     if (err) {
       console.log(err);
     }
-    console.log(results);
     let roleArray = results.map((roleList) => ({
       name: roleList.title,
       value: roleList.role_id,
@@ -319,61 +315,12 @@ async function addEmployee() {
               console.log(err);
             }
             console.log(`${answers.addFirstName} was added `);
+            askQuestions();
           }
         );
       });
   });
 }
-
-function getRoleArray() {
-  let addNewQuery = fs.readFileSync("./db/addNewEmp.sql", "utf8");
-  db.query(addNewQuery, (err, results) => {
-    if (err) {
-      console.log(err);
-    }
-    let roleArray = [];
-    results.forEach((role) => roleArray.push(role.title));
-    let uniqueRoleArray = [...new Set(roleArray)];
-    return uniqueRoleArray;
-  });
-}
-
-// getManagerArray();
-
-// getDepArray()
-
-function getDepArray() {
-  db.query("SELECT department_name FROM department", (err, results) => {
-    if (err) {
-      console.log(err);
-    }
-    let departmentArray = [];
-    results.forEach((department) =>
-      departmentArray.push(department.department_name)
-    );
-    let listOfDepartments = [...new Set(departmentArray)];
-    console.log(listOfDepartments);
-    return listOfDepartments;
-  });
-}
-
-// addNewEmployee();
-
-function getManagerArray() {
-  let addNewQuery = fs.readFileSync("./db/addNewEmp.sql", "utf8");
-  db.query(addNewQuery, (err, results) => {
-    if (err) {
-      console.log(err);
-    }
-    let managerArray = [];
-    results.forEach((role) => managerArray.push(role.Manager));
-    let uniqueManagerArray = [...new Set(managerArray)];
-    let removeNullArray = uniqueManagerArray.filter((n) => n);
-    return removeNullArray;
-  });
-}
-
-updateEmployeeRole()
 
 function updateEmployeeRole() {
   db.query("SELECT * FROM role", (err, results) => {
@@ -391,8 +338,8 @@ function updateEmployeeRole() {
       let empArry = results.map((empList) => ({
         name: empList.first_name + " " + empList.last_name,
         value: empList.employee_id,
-            }));
-            console.log(empArry)
+      }));
+      console.log(empArry);
       inquirer
         .prompt([
           {
@@ -411,13 +358,16 @@ function updateEmployeeRole() {
         .then((answers) => {
           db.query(
             "UPDATE employee SET ? WHERE ?",
-            [{ employee_id: answers.employeeName}, {role_id: answers.newRole }],
+            [
+              { employee_id: answers.employeeName },
+              { role_id: answers.newRole },
+            ],
             (err, results) => {
               if (err) {
                 console.log(err);
               }
-              console.log("Employee updated")
-              askQuestions()
+              console.log("Employee updated");
+              askQuestions();
             }
           );
         });
