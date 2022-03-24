@@ -6,6 +6,7 @@
 ## Description
 A program that allows a business owner to view and manage the departments, roles and employees in their company. 
 
+![employee-tracker](https://user-images.githubusercontent.com/95051960/159871690-af75cca7-7aa7-4e7e-8578-e2903bd0c30d.png)
 
 
 - - - - 
